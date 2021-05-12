@@ -2,7 +2,7 @@ var app = require('express')();
 var bodyParser = require('body-parser');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 7001;
 
 app.use(bodyParser.json());
 
