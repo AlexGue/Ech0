@@ -10,6 +10,10 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/display/endpoints', function(req, res) {
+  res.sendFile(__dirname + '/display/endpoints.html');
+});
+
 function emit(req, method) {
   console.log("new request");
 
@@ -27,6 +31,7 @@ function emit(req, method) {
 
   return info;
 }
+
 
 
 app.get('/echo/*', function(req, res) {
