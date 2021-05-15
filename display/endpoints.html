@@ -108,7 +108,7 @@
             var socket = io();
             socket.on('request', function (info) {
                 addRequest(JSON.parse(info))
-                window.scrollTo(0, document.body.scrollHeight);
+               // window.scrollTo(0, document.body.scrollHeight); 
             });
         });
     </script>
