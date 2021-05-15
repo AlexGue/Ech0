@@ -58,6 +58,16 @@
     <pre id="title">API Request Echo</pre>
     <pre id="subtitle">Showing requests to /echo/...</pre>
     <div id="requests"></div>
+    <table class="content-table" id="tableResume" style="width:100%">
+        <thead>
+            <tr>
+                <th>Resume</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableResumeBody"></tbody>
+    </table>
+    <br></br>
     <table class="content-table" id="tableRequests" style="width:100%">
         <thead>
             <tr>
@@ -67,7 +77,6 @@
             </tr>
         </thead>
         <tbody id="tableRequestsBody"></tbody>
-
     </table>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -92,9 +101,13 @@
                 }
                 requestCount[info.headers['x-forwarded-for']][info.method]++;
 
+                $('#tableResumeBody').empty();
+                $('#tableResumeBody').append('<tr>').append($("<td>").text("IP's count"));
+                $('#tableResumeBody').append($("<td>").text(Object.keys(requestCount).length));
+
+
                 $('#tableRequestsBody').empty();
                 Object.keys(requestCount).forEach(ip => {
-
                     Object.keys(requestCount[ip]).filter(e=>higherThan0(requestCount[ip][e])).forEach(method => {
                         $('#tableRequestsBody').append('<tr>').append($("<td>").text(ip))
                         $('#tableRequestsBody').append($("<td>").text(method))
