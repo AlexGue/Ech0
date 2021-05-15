@@ -2,16 +2,18 @@ var app = require('express')();
 var bodyParser = require('body-parser');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const path = require('path');
 var port = process.env.PORT || 7001;
 
 app.use(bodyParser.json());
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/display/endpoints', function(req, res) {
-  res.sendFile(__dirname + '/display/endpoints.html');
+app.get('/display/*', function (req, res) {
+  console.log(req.url)
+  res.sendFile(path.join(__dirname, req.url +'.html'));
 });
 
 function emit(req, method) {
@@ -34,58 +36,58 @@ function emit(req, method) {
 
 
 
-app.get('/echo/*', function(req, res) {
+app.get('/echo/*', function (req, res) {
   res.send(emit(req, "get"));
 });
-app.post('/echo/*', function(req, res) {
+app.post('/echo/*', function (req, res) {
   res.send(emit(req, "post"));
 });
-app.put('/echo/*', function(req, res) {
+app.put('/echo/*', function (req, res) {
   res.send(emit(req, "put"));
 });
-app.patch('/echo/*', function(req, res) {
+app.patch('/echo/*', function (req, res) {
   res.send(emit(req, "patch"));
 });
-app.delete('/echo/*', function(req, res) {
+app.delete('/echo/*', function (req, res) {
   res.send(emit(req, "delete"));
 });
-app.copy('/echo/*', function(req, res) {
+app.copy('/echo/*', function (req, res) {
   res.send(emit(req, "copy"));
 });
-app.head('/echo/*', function(req, res) {
+app.head('/echo/*', function (req, res) {
   res.send(emit(req, "head"));
 });
-app.options('/echo/*', function(req, res) {
+app.options('/echo/*', function (req, res) {
   res.send(emit(req, "options"));
 });
-app.link('/echo/*', function(req, res) {
+app.link('/echo/*', function (req, res) {
   res.send(emit(req, "link"));
 });
-app.unlink('/echo/*', function(req, res) {
+app.unlink('/echo/*', function (req, res) {
   res.send(emit(req, "unlink"));
 });
-app.purge('/echo/*', function(req, res) {
+app.purge('/echo/*', function (req, res) {
   res.send(emit(req, "purge"));
 });
-app.lock('/echo/*', function(req, res) {
+app.lock('/echo/*', function (req, res) {
   res.send(emit(req, "lock"));
 });
-app.unlock('/echo/*', function(req, res) {
+app.unlock('/echo/*', function (req, res) {
   res.send(emit(req, "unlock"));
 });
-app.propfind('/echo/*', function(req, res) {
+app.propfind('/echo/*', function (req, res) {
   res.send(emit(req, "propfind"));
 });
 
 
 
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
   console.log("new client");
-  socket.on('request', function(info) {
+  socket.on('request', function (info) {
     io.emit('request', info);
   });
 });
 
-http.listen(port, function() {
+http.listen(port, function () {
   console.log('listening on *:' + port);
 });

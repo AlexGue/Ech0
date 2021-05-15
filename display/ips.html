@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>API Echo</title>
+    <style>
+        * {
+            font-family: sans-serif;
+            font-size: 20px;
+            /* Change your font family */
+        }
+
+
+        .content-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            width: 80% !important;
+            margin: auto;
+            font-size: 0.9em;
+            min-width: 400px;
+            border-radius: 5px 5px 0 0;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .content-table th,
+        .content-table td {
+            padding: 12px 15px;
+        }
+
+        .content-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .content-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .content-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .content-table tbody tr.active-row {
+            font-weight: bold;
+            color: #009879;
+        }
+    </style>
+</head>
+
+<body>
+    <pre id="title">API Request Echo</pre>
+    <pre id="subtitle">Showing requests to /echo/...</pre>
+    <div id="requests"></div>
+    <table class="content-table" id="tableRequests" style="width:100%">
+        <thead>
+            <tr>
+                <th>Ip</th>
+                <th>Method</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody id="tableRequestsBody"></tbody>
+
+    </table>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            let requestCount = {};
+            function higherThan0(n){
+                return n > 0;
+            }
+            function addRequest(info) {
+                if (!requestCount[info.headers?.['x-forwarded-for']]) {
+                    requestCount[info.headers?.['x-forwarded-for']] = {
+                        "get": 0,
+                        "post": 0,
+                        "put": 0,
+                        "delete": 0,
+                        "patch": 0,
+                        "head": 0,
+                        "options": 0,
+                        "copy": 0
+                    }
+                }
+                requestCount[info.headers['x-forwarded-for']][info.method]++;
+
+                $('#tableRequestsBody').empty();
+                Object.keys(requestCount).forEach(ip => {
+
+                    Object.keys(requestCount[ip]).filter(e=>higherThan0(requestCount[ip][e])).forEach(method => {
+                        $('#tableRequestsBody').append('<tr>').append($("<td>").text(ip))
+                        $('#tableRequestsBody').append($("<td>").text(method))
+                        $('#tableRequestsBody').append($("<td>").text(requestCount[ip][method]))
+                    })
+
+                })
+            }
+
+            var socket = io();
+            socket.on('request', function (info) {
+                addRequest(JSON.parse(info))
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });
+    </script>
+</body>
+
+</html>
